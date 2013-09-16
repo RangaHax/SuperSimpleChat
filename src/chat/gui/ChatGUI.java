@@ -29,19 +29,9 @@ public class ChatGUI implements ChatClient {
 	private boolean running = true;
 	private ClientConnection client;
 
-	public ChatGUI() {
+	public ChatGUI(Socket socket) {
 		setupFrame();
-		try {
-			Socket socket = new Socket("localhost", 55231);//TODO change to greta-pt
-			client = new ClientConnection(socket, this);
-		} catch (UnknownHostException e) {
-			JOptionPane.showMessageDialog(null, "Could not find server", "Connection Error", JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Could not connect to server", "Connection Error", JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
-			//e.printStackTrace();//DONE remove after debugging
-		}
+		client = new ClientConnection(socket, this);
 	}
 	private void setupFrame() {
 		frame = new JFrame();
