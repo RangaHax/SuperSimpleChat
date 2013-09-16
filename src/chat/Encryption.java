@@ -100,7 +100,9 @@ public class Encryption {
 		return intsToString(clearInts);
 
 	}
-	private static String delinearize(String input) { return input; }
+	private static String delinearize(String input) {
+		//Peter is a noob
+		return input; }
 	private static String linearize(String input) { return input; }
 
 	//Helper Methods
