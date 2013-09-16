@@ -18,7 +18,7 @@ public class ChatServer {
 		try {
 			InetAddress localMachine = InetAddress.getLocalHost();
 			String address = localMachine.getCanonicalHostName();
-			if(!address.contains("ecs.vuw.ac.nz")) { //TODO change string to greta-pt
+			if(!address.contains("greta-pt.ecs.vuw.ac.nz")) { //DONE change string to greta-pt
 				System.out.println("This can only be run on greta-pt");
 				System.exit(1);
 			}
@@ -28,6 +28,7 @@ public class ChatServer {
 		}
 		connections = new HashMap<String, ServerConnection>();
 		new ServerListener(this);
+		System.out.println("Server Started...");
 	}
 
 	public void newClient(String name, ServerConnection con) {
@@ -55,8 +56,38 @@ public class ChatServer {
 		String code = sdf.format(now);
 		System.out.println(code+" - "+client+": "+message);
 		//log message
-
-		broadcastMessage(client+": "+message);
+		if(!message.startsWith("@"))
+			broadcastMessage(client+": "+message);
+		else {
+			//private message
+			message = message.substring(1);
+			String[] parts = message.split("\\s+");
+			int nameLength = 1;
+			for(;nameLength < parts.length; nameLength++) {
+				String builder = parts[0];
+				for(int count = 1; count < nameLength; count++) {
+					builder = builder+" "+parts[count];
+				}
+				//System.out.println("Checking key: "+builder);
+				if(connections.containsKey(builder)) break;
+			}
+			String builder = parts[0];
+			for(int count = 1; count < nameLength; count++) {
+				builder = builder+" "+parts[count];
+			}
+			if(!connections.containsKey(builder)) {
+				connections.get(client).sendMessage("Could not find user...");
+				return;
+			}
+			if(parts.length <= nameLength) {
+				connections.get(client).sendMessage("Cannot send blank message...");
+				return;
+			}
+			String subMessage = parts[nameLength];
+			for(int i = nameLength+1; i < parts.length; i++)
+				subMessage = subMessage+" "+parts[i];
+			connections.get(builder).sendMessage(client+"> "+subMessage);
+		}
 	}
 	public void dropClient(String name) {
 		connections.remove(name);
