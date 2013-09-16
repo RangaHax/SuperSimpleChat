@@ -18,7 +18,7 @@ public class ChatServer {
 		try {
 			InetAddress localMachine = InetAddress.getLocalHost();
 			String address = localMachine.getCanonicalHostName();
-			if(!address.contains("greta-pt.ecs.vuw.ac.nz")) { //DONE change string to greta-pt
+			if(!address.contains("ecs.vuw.ac.nz")) { //TODO change string to greta-pt
 				System.out.println("This can only be run on greta-pt");
 				System.exit(1);
 			}
@@ -37,12 +37,15 @@ public class ChatServer {
 			return;
 		}
 		connections.put(name, con);
-		broadcastMessage(name+" has joined...");
+		String s = name+" has joined";
+		if(connections.size() == 1) s = s + ", 1 player online...";
+		else s = s + ", "+connections.size()+" playes online...";
+		broadcastMessage(s);
 
 		//log message
 		Date now = new Date();
 		String code = sdf.format(now);
-		System.out.println(code+" - "+name+" has joined...");
+		System.out.println(code+" - "+s);
 		//log message
 	}
 	SimpleDateFormat sdf = new SimpleDateFormat("HH:MM:ss dd/MM/yyyy");
@@ -57,12 +60,15 @@ public class ChatServer {
 	}
 	public void dropClient(String name) {
 		connections.remove(name);
-		broadcastMessage(name+" has left...");
+		String s = name+" has left";
+		if(connections.size() == 1) s = s + ", 1 player left...";
+		else s = s + ", "+connections.size()+" playes left...";
+		broadcastMessage(s);
 
 		//log message
 		Date now = new Date();
 		String code = sdf.format(now);
-		System.out.println(code+" - "+name+" has left...");
+		System.out.println(code+" - "+s);
 		//log message
 
 	}

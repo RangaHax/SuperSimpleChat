@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import chat.Encryption;
+
 public class ClientConnection {
 
 	private String clientName;
@@ -35,7 +37,7 @@ public class ClientConnection {
 				e.printStackTrace();
 				System.exit(1);
 			}
-			output.println(clientName);
+			output.println(Encryption.encrypt(clientName));
 			output.flush();
 			new ClientConListener(input, this);
 		} catch (IOException e) {
@@ -44,8 +46,9 @@ public class ClientConnection {
 	}
 	public void sendMessage(String message) {
 		if(message.equals(ClientConListener.KILL_MESSAGE)) running = false;
-		output.println(message);
+		output.println(Encryption.encrypt(message));
 		output.flush();
+		if(output.checkError()) master.shutdown();
 	}
 	public void reciveMessage(String message) {
 		if(message.equals(ClientConListener.KILL_MESSAGE)) {
@@ -78,14 +81,22 @@ class ClientConListener extends Thread {
 	}
 	public void run() {
 		while(!lastMessage.equals(KILL_MESSAGE)) {
+			boolean encryptionFailure = false;
 			try {
-				lastMessage = scan.readLine();
+				String s = scan.readLine();
+				if(s == null) lastMessage = KILL_MESSAGE;
+				else s = Encryption.decrypt(s);
+				if(s != null) {
+					lastMessage = s;
+				}
+				else {
+					encryptionFailure = true;
+				}
 			} catch (IOException e) {
 				lastMessage = KILL_MESSAGE;
 				//e.printStackTrace(); //DONE remove this after debugging
 			}
-			if(lastMessage == null) lastMessage = KILL_MESSAGE;
-			master.reciveMessage(lastMessage);
+			if(!encryptionFailure) master.reciveMessage(lastMessage);
 		}
 	}
 }

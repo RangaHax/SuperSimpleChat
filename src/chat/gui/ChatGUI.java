@@ -32,7 +32,7 @@ public class ChatGUI implements ChatClient {
 	public ChatGUI() {
 		setupFrame();
 		try {
-			Socket socket = new Socket("greta-pt", 55231);//DONE change to greta-pt
+			Socket socket = new Socket("localhost", 55231);//TODO change to greta-pt
 			client = new ClientConnection(socket, this);
 		} catch (UnknownHostException e) {
 			JOptionPane.showMessageDialog(null, "Could not find server", "Connection Error", JOptionPane.ERROR_MESSAGE);
@@ -61,7 +61,8 @@ public class ChatGUI implements ChatClient {
 			public void windowDeactivated(WindowEvent e) {}
 			@Override
 			public void windowClosing(WindowEvent e) {
-				System.exit(0);
+				running = false;
+				client.sendMessage("#KILL#");
 			}
 			@Override
 			public void windowClosed(WindowEvent e) {}
