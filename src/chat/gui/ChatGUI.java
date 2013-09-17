@@ -123,6 +123,37 @@ public class ChatGUI implements ChatClient {
 		chatField.requestFocus();
 	}
 
+	public Color colorChooser(String col){
+		String color = col.toLowerCase();
+
+		if(color.equals("blue"))
+			return Color.blue;
+		if(color.equals("black"))
+			return Color.black;
+		if(color.equals("cyan"))
+			return Color.cyan;
+		if(color.equals("green"))
+			return Color.green;
+		if(color.equals("megenta"))
+			return Color.magenta;
+		if(color.equals("oragne"))
+			return Color.orange;
+		if(color.equals("pink"))
+			return Color.pink;
+		if(color.equals("red"))
+			return Color.red;
+
+		return null;
+	}
+
+	public void changeColorForeGround(Color color){
+		chatPane.setForeground(color);
+	}
+
+	public void changeColorBackGround(Color color){
+		chatPane.setBackground(color);
+	}
+
 	@Override
 	public void shutdown() {
 		if(running) JOptionPane.showMessageDialog(null, "Server communication error", "Error", JOptionPane.ERROR_MESSAGE);
